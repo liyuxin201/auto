@@ -1,0 +1,6 @@
+<launch>
+    <!-- <include file="$(find mavros)/launch/px4.launch" /> 
+    <include file="$(find airsim_ros_pkgs)/launch/airsim_node.launch" /> 
+    <include file="$(find fast_lio)/launch/mapping_airsim.launch" />   -->
+    <node pkg="workspace" type="lidar_position_node" name="lidar_position_node" />
+</launch>

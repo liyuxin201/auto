@@ -1,0 +1,20 @@
+#PX4参数配置文件
+
+#无人机自身参数配置--------------------------------
+
+
+
+
+#飞行任务参数配置----------------------------------
+#1.无人机安全飞行空间
+#坐标系为ENU坐标系
+#限制的x y z 为绝对值距离 
+flight_area:
+  flight_area_xmax : 200
+  flight_area_ymax : 150
+  flight_area_hightmax : 50
+
+flight_velocity:
+  vx : 0.5
+  vy : 0.5
+  vz : 3
