@@ -1,0 +1,29 @@
+#PX4参数配置文件
+
+#无人机自身参数配置--------------------------------
+
+
+
+
+#飞行任务参数配置----------------------------------
+#1.无人机安全飞行空间
+#坐标系为ENU坐标系
+#限制的x y z 为绝对值距离 
+flight_area:
+  flight_area_xmax : 200
+  flight_area_ymax : 200
+  flight_area_hightmax : 20
+
+flight_velocity:
+  vx : 3
+  vy : 3
+  vz : 3
+
+velocity_tracking:
+  kp_x : 0.8
+  # 如果绕障时有点拖尾，就先把 kp_x/kp_y 从 0.8 往 1.0 附近加。
+  kp_y : 0.7
+  # 如果出现抖动或来回修正，就把 kp_x/kp_y 往 0.5~0.7 降。
+  kp_z : 1.0
+  # 高度跟踪不稳时单独调 kp_z，不要先动平面增益。
+  cmd_timeout : 0.2

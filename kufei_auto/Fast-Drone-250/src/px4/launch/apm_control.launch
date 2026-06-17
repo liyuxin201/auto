@@ -1,0 +1,10 @@
+<launch>
+
+    <param name="param_A" type="int" value = "100" />
+    <rosparam command="load" file="$(find px4)/launch/params.yaml" />
+
+    <!-- <node pkg="mesh" type="mesh_start_node" name="mesh_node" output="screen" /> -->
+    <node pkg="px4" type="apm_control_node" name="apm_control" output="screen" />
+    <node pkg="px4" type="xyz_input_node" name="xyz_input_node" output="screen" />
+
+</launch>

@@ -1,0 +1,73 @@
+<launch>
+<!-- Launch file for Livox Mid360 LiDAR -->
+
+	<!-- livox driver launch -->
+	<arg name="lvx_file_path" default="livox_test.lvx"/>
+	<arg name="bd_list" default="100000000000000"/>
+	<arg name="xfer_format" default="1"/>
+	<arg name="multi_topic" default="0"/>
+	<arg name="data_src" default="0"/>
+	<arg name="publish_freq" default="10.0"/>
+	<arg name="output_type" default="0"/>
+	<arg name="rviz_enable" default="true"/>
+	<arg name="rosbag_enable" default="false"/>
+	<arg name="cmdline_arg" default="$(arg bd_list)"/>
+	<arg name="msg_frame_id" default="world"/>
+	<arg name="lidar_bag" default="true"/>
+	<arg name="imu_bag" default="true"/>
+	<!--user configure parameters for ros end--> 
+	<param name="xfer_format" value="$(arg xfer_format)"/>
+	<param name="multi_topic" value="$(arg multi_topic)"/>
+	<param name="data_src" value="$(arg data_src)"/>
+	<param name="publish_freq" type="double" value="$(arg publish_freq)"/>
+	<param name="output_data_type" value="$(arg output_type)"/>
+	<param name="cmdline_str" type="string" value="$(arg bd_list)"/>
+	<param name="cmdline_file_path" type="string" value="$(arg lvx_file_path)"/>
+	<param name="user_config_path" type="string" value="$(find livox_ros_driver2)/config/MID360_config.json"/>
+	<param name="frame_id" type="string" value="$(arg msg_frame_id)"/>
+	<param name="enable_lidar_bag" type="bool" value="$(arg lidar_bag)"/>
+	<param name="enable_imu_bag" type="bool" value="$(arg imu_bag)"/>
+
+	<node name="livox_lidar_publisher2" pkg="livox_ros_driver2"
+	      type="livox_ros_driver2_node" required="true"
+	      output="screen" args="$(arg cmdline_arg)"/>
+	<group if="$(arg rosbag_enable)">
+    	<node pkg="rosbag" type="record" name="record" output="screen"
+          		args="-a"/>
+    </group>
+
+	<!-- camera launch -->
+	<node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+		<param name="video_device" value="/dev/video0" />
+		<param name="image_width" value="1280" />
+		<param name="image_height" value="720" />
+		<param name="pixel_format" value="mjpeg" />
+		<!-- <param name="color_format" value="yuv422p" /> -->
+		<param name="camera_frame_id" value="usb_cam" />
+		<param name="io_method" value="mmap"/>
+	</node>
+
+	<!-- fast livo launch -->
+	<arg name="rviz" default="true" />
+
+	<rosparam command="load" file="$(find fast_livo)/config/mid360.yaml" />
+
+	<node pkg="fast_livo" type="fastlivo_mapping" name="laserMapping" output="screen">
+		<rosparam file="$(find fast_livo)/config/camera_pinhole_mid360.yaml" />
+	</node>
+	
+	<group if="$(arg rviz)">
+		<node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find fast_livo)/rviz_cfg/fast_livo2.rviz" />
+	</group>
+	
+	<node pkg="image_transport" type="republish" name="republish" args="compressed in:=/left_camera/image raw out:=/left_camera/image" output="screen" respawn="true"/>
+
+	<param name="odometry_topic" value="/aft_mapped_to_init"/>
+	<!-- 里程计消息转换 -->
+	<node pkg="test" type="fastlivo_odom_node" name="fastlivo_odom" output="screen" />
+
+	<param name="pointcloud_topic" value="/cloud_effected"/>
+	<!-- 点云坐标系转换 -->
+	<!-- <node pkg="test" type="livoxpc_transform_node" name="livoxpc_transform_node" output="screen" />> -->
+    <node pkg="test" type="pc_downsample_node" name="pc_downsample_node" output="screen" />
+</launch> 	

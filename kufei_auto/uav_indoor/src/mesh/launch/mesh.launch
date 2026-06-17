@@ -1,0 +1,7 @@
+<launch>
+    <!-- <rosparam command="load" file="$(find mesh)/launch/params.yaml" /> -->
+    <param name="ip_address" value="192.168.42.62" />   
+    <param name="port" value="10000" />   
+    <param name="uav_id" value="6" />              
+    <node pkg="mesh" type="mesh_node" name="mesh" output="screen" />
+</launch>

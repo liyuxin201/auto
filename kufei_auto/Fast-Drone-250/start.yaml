@@ -1,0 +1,12 @@
+session_name: ego
+windows:
+  - window_name: ego
+    layout: even-horizontal
+    shell_command_before:
+      - source devel/setup.bash
+    panes:
+      - shell_command:
+          - roslaunch ego_planner single_run_in_exp.launch 
+      - shell_command:
+          - sleep 5
+          - roslaunch px4 px4_control.launch 
